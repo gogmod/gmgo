@@ -1,0 +1,2 @@
+# gmgo
+module gmgo

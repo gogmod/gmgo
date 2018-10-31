@@ -1,6 +1,7 @@
 package gmgo
 
 import (
+    "time"
     "github.com/sirupsen/logrus"
     mgo "gopkg.in/mgo.v2"
 )

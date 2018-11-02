@@ -20,7 +20,7 @@ func NewGmgoSession(cfg *GmgoConfig) *mgo.Session {
         Database: cfg.Database,
         Username: cfg.Username,
         Password: cfg.Password,
-        Timeout:  time.Second * 30,
+        Timeout:  time.Second * 10,
     }
 
     logrus.Infof("gmgo dial info: %+v", dialInfo)
@@ -31,6 +31,7 @@ func NewGmgoSession(cfg *GmgoConfig) *mgo.Session {
         panic(err)
     }
     session.SetMode(mgo.Monotonic, true)
+    session.SetSafe(&mgo.Safe{WMode: "majority"})
     session.SetPoolLimit(cfg.PoolLimit)
     logrus.Info("mongodb connected!")
     return session

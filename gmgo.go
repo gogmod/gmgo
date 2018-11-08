@@ -1,6 +1,7 @@
 package gmgo
 
 import (
+	"fmt"
 	"time"
 
 	"github.com/gogmod/pool"
@@ -28,32 +29,32 @@ type Config struct {
 
 //初始化mgo
 func InitGmgo(config Config) {
+	fmt.Println(session)
 	var connGcSecond = time.Duration(config.GmgoConnGcSecond) * 1e9
-	MGO_CONN_STR = config.GmgoConnStr
-	MGO_CONN_CAP = config.GmgoConnCap
 	GmgoPool = pool.ClassicPool(
-		config.GmgoConnCap, config.GmgoConnCap/5,
+		config.GmgoConnCap,
+		config.GmgoConnCap/5,
 		func() (pool.Src, error) {
-			if err != nil || session.Ping() != nil {
-				if session != nil {
-					session.Close()
-				}
-				Refresh()
+			if session != nil && err != nil {
+				session.Close()
+				Refresh(config.GmgoConnStr, config.GmgoConnCap)
+			}
+			if session == nil {
+				Refresh(config.GmgoConnStr, config.GmgoConnCap)
 			}
 			return &GmgoSrc{session.Clone()}, err
 		},
 		connGcSecond)
 }
 
-//Refresh ....
-func Refresh() {
-	session, err = mgo.Dial(MGO_CONN_STR)
+func Refresh(gmgoConnStr string, gmgoConnCap int) {
+	session, err = mgo.Dial(gmgoConnStr)
 	if err != nil {
 		logrus.Errorf("Gmgo: %v\n", err)
 	} else if err = session.Ping(); err != nil {
 		logrus.Errorf("Gmgo: %v\n", err)
 	} else {
-		session.SetPoolLimit(MGO_CONN_CAP)
+		session.SetPoolLimit(gmgoConnCap)
 	}
 }
 

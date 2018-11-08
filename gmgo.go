@@ -45,13 +45,13 @@ func InitGmgo(config Config) {
 		connGcSecond)
 }
 
-//
+//Refresh ....
 func Refresh() {
 	session, err = mgo.Dial(MGO_CONN_STR)
 	if err != nil {
-		logrus.Error("Gmgo: %v\n", err)
+		logrus.Errorf("Gmgo: %v\n", err)
 	} else if err = session.Ping(); err != nil {
-		logrus.Error("Gmgo: %v\n", err)
+		logrus.Errorf("Gmgo: %v\n", err)
 	} else {
 		session.SetPoolLimit(MGO_CONN_CAP)
 	}

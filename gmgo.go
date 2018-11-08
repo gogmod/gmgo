@@ -87,3 +87,19 @@ func Release(){
 func Len() int {
     return GmgoPool.Len()
 }
+
+func DatabaseNames() (names []string, err error) {
+    err = GmgoPool.Call(func(src pool.Src) error {
+        names, err = src.(*GmgoSrc).DatabaseNames()
+        return err
+    })
+    return
+}
+
+func CollectionNames(dbname string) (names []string, err error) {
+    GmgoPool.Call(func(src pool.Src) error {
+        names, err = src.(*GmgoSrc).DB(dbname).CollectionNames()
+        return err
+    })
+    return
+}
